@@ -1,6 +1,5 @@
-
-# Dicionário que define como cada caractere será convertido
-# As chaves são letras/números e os valores são os símbolos correspondentes
+# Dicionário que define como cada letra, número ou espaço será convertido
+# A chave é o caractere original e o valor é o símbolo correspondente
 conversoes = {
     'A':'@','B':'8','C':'(','D':'D','E':'3','F':'F','G':'6','H':'#',
     'I':'1','J':'J','K':'K','L':'1','M':'M','N':'N','O':'0','P':'P',
@@ -8,14 +7,15 @@ conversoes = {
     'Y':'Y','Z':'2',
     '0':')','1':'!','2':'@','3':'#','4':'$','5':'%','6':'^',
     '7':'&','8':'*','9':'(',
-    ' ':'_'  # Espaços são convertidos em _
+    ' ':'_'  # O espaço é convertido no símbolo _
 }
 
-# Lista onde serão guardadas todas as passwords geradas
+# Lista para guardar todas as passwords geradas
 historico_passwords = []
 
-# Loop principal do programa (executa até o utilizador escolher sair)
+# Ciclo infinito que mantém o programa a correr até o utilizador sair
 while True:
+
     # Mostra o menu principal
     print("\n--- MENU ---")
     print("1 - Ver lista de conversões")
@@ -23,27 +23,35 @@ while True:
     print("3 - Ver histórico de passwords")
     print("0 - Sair")
 
-    # Lê a opção escolhida pelo utilizador
-    # .lower() garante que maiúsculas/minúsculas não fazem diferença
+    # Lê a opção do utilizador
+    # .lower() evita problemas com maiúsculas/minúsculas
     opcao = input("Escolhe uma opção: ").lower()
 
-    # Opção 1: mostrar todas as conversões
+    # ================= OPÇÃO 1 =================
+    # Mostrar a lista de conversões
     if opcao == "1":
-        print("\nLista de conversões:")
-        # Percorre o dicionário e mostra cada conversão
-        for chave, valor in conversoes.items():
-            print(f"{chave} -> {valor}")
 
-        # Loop para obrigar o utilizador a escrever "menu" para voltar
+        # Título da lista
+        print("\nLista de conversões:")
+
+        # Percorre o dicionário mostrando cada conversão
+        for chave, valor in conversoes.items():
+            print(chave, "->", valor)
+
+        # Ciclo que obriga o utilizador a escrever "menu" para voltar
         while True:
             voltar = input("\nEscreve 'menu' para voltar: ").lower()
             if voltar == "menu":
-                break
+                break  # Volta ao menu principal
 
-    # Opção 2: gerar password
+    # ================= OPÇÃO 2 =================
+    # Gerar password a partir de uma frase
     elif opcao == "2":
-        # Pede a password ao utilizador
+
+        # Pede a frase/password ao utilizador
         frase = input("\nIntroduz a password: ")
+
+        # Pede confirmação da password
         confirmar = input("Confirma a password: ")
 
         # Verifica se as duas passwords são iguais
@@ -51,6 +59,7 @@ while True:
             print("❌ Passwords não coincidem!")
             continue  # Volta ao menu principal
 
+        # Mensagem de sucesso
         print("✅ Password confirmada com sucesso.")
 
         # Variável onde será construída a password convertida
@@ -58,27 +67,46 @@ while True:
 
         # Percorre cada caractere da frase original
         for c in frase:
-            c_upper = c.upper()  # Converte para maiúscula
-            # Se o caractere existir no dicionário, converte
+
+            # Converte o caractere para maiúscula
+            c_upper = c.upper()
+
+            # Se o caractere existir no dicionário de conversões
             if c_upper in conversoes:
+                # Adiciona o símbolo correspondente à password
                 password += conversoes[c_upper]
             else:
-                # Se não existir, mantém o caractere original
+                # Caso não exista conversão, mantém o caractere original
                 password += c
 
-        # Mostra a password final
+        # Mostra a password final gerada
         print("\nPassword gerada:", password)
 
         # Guarda a password no histórico
         historico_passwords.append(password)
 
-        # Verifica se a frase original contém números
-        tem_numeros = any(c.isdigit() for c in frase)
+        # -----------------------------
+        # VERIFICAÇÃO DA FORÇA DA PASSWORD
+        # -----------------------------
 
-        # Verifica se contém caracteres especiais (exceto espaço)
-        tem_especiais = any(not c.isalnum() and c != " " for c in frase)
+        # Variável que indica se a frase tem números
+        tem_numeros = False
 
-        # Avaliação da força da password
+        # Variável que indica se a frase tem caracteres especiais
+        tem_especiais = False
+
+        # Percorre cada caractere da frase original
+        for c in frase:
+
+            # Se o caractere for um número
+            if c.isdigit():
+                tem_numeros = True
+
+            # Se não for letra nem número e não for espaço
+            if not c.isalnum() and c != " ":
+                tem_especiais = True
+
+        # Avalia a força da password
         if tem_especiais:
             print("Força da password: MUITO BOA")
         elif tem_numeros:
@@ -86,37 +114,43 @@ while True:
         else:
             print("Força da password: MUITO MÁ")
 
+        # Mensagem decorativa
         print("\nA entrar no kuma rp...")
 
-        # Espera até o utilizador escrever "menu"
+        # Aguarda o utilizador escrever "menu"
         while True:
             voltar = input("\nEscreve 'menu' para voltar: ").lower()
             if voltar == "menu":
                 break
 
-    # Opção 3: mostrar histórico de passwords
+    # ================= OPÇÃO 3 =================
+    # Mostrar o histórico de passwords
     elif opcao == "3":
+
+        # Título do histórico
         print("\n--- HISTÓRICO DE PASSWORDS ---")
-        # Se o histórico estiver vazio
-        if not historico_passwords:
+
+        # Se ainda não houver passwords guardadas
+        if len(historico_passwords) == 0:
             print("Ainda não foram geradas passwords.")
         else:
-            # Mostra todas as passwords guardadas
-            for i, p in enumerate(historico_passwords, start=1):
-                print(f"{i} - {p}")
+            # Percorre o histórico e mostra cada password numerada
+            for i in range(len(historico_passwords)):
+                print(i + 1, "-", historico_passwords[i])
 
-        # Aguarda o comando "menu"
+        # Aguarda o utilizador escrever "menu"
         while True:
             voltar = input("\nEscreve 'menu' para voltar: ").lower()
             if voltar == "menu":
                 break
 
-    # Opção 0: sair do programa
+    # ================= OPÇÃO 0 =================
+    # Sair do programa
     elif opcao == "0":
         print("\nSaiste do malta rp .")
-        break  # Termina o loop principal
+        break  # Termina o ciclo principal e o programa
 
-    # Caso o utilizador escolha uma opção inválida
+    # ================= OPÇÃO INVÁLIDA =================
+    # Caso o utilizador escolha uma opção que não existe
     else:
         print("\nOpção inválida.")
-
